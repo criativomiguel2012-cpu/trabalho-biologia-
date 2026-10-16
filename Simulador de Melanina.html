@@ -1,0 +1,1513 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Simulador de Melanina</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Simulador interativo de melanogênese: tirosinase, MC1R e sol mudam a cor da pele e do cabelo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: bancada de histologia. Amostra de pele ao vivo primeiro; controles num trilho fixo (desktop) ou numa doca no rodapé (celular); depois gráfico, via bioquímica e resumo. */
+:root {
+  --bg: #eceef3;
+  --surface: #fbfcfe;
+  --surface-2: #f1f3f8;
+  --ink: #151823;
+  --ink-2: #444b5e;
+  --ink-3: #686f84;
+  --line: #d9dde7;
+  --line-strong: #b8bfcf;
+  --accent: #4a3ad0;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6e2fc;
+  --eu: #8a4b1f;
+  --ph: #e86a2e;
+  --uv: #6d4cf2;
+  --track-edge: rgba(21, 24, 35, .16);
+  --shadow: 0 1px 2px rgba(21, 24, 35, .06), 0 10px 30px rgba(21, 24, 35, .08);
+  --dock-shadow: 0 -10px 30px rgba(21, 24, 35, .12);
+  --grid-dot: rgba(74, 58, 208, .13);
+
+  --t-sc: #efe1da;
+  --t-epi: #f7eae5;
+  --t-epi-line: #dfc5bd;
+  --t-nuc: #7b6ab8;
+  --t-mc: #edd3c7;
+  --t-mc-line: #c49c8f;
+  --t-dend: #dcbbad;
+  --t-derm: #f3d8db;
+  --t-collagen: #e2b7bd;
+  --t-vessel: #c23b3b;
+  --t-fol: #f0dfd8;
+  --t-fol-edge: #d5b6ac;
+  --t-pap: #efc6cb;
+  --side-sc: #e3d2cb;
+  --side-epi: #e6d3cc;
+  --side-derm: #e2c1c6;
+
+  --font-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1118;
+    --surface: #171a23;
+    --surface-2: #1e2230;
+    --ink: #eceef6;
+    --ink-2: #b6bbcc;
+    --ink-3: #8c92a7;
+    --line: #282d3b;
+    --line-strong: #3a4154;
+    --accent: #a598ff;
+    --accent-ink: #14112a;
+    --accent-soft: #262246;
+    --eu: #9a5422;
+    --ph: #e8692e;
+    --uv: #a48cff;
+    --track-edge: rgba(255, 255, 255, .16);
+    --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    --dock-shadow: 0 -10px 30px rgba(0, 0, 0, .5);
+    --grid-dot: rgba(165, 152, 255, .12);
+    --t-sc: #d9c9c2;
+    --t-epi: #e2d2cc;
+    --t-epi-line: #c4aaa2;
+    --t-nuc: #6a5aa8;
+    --t-mc: #d8bdb1;
+    --t-mc-line: #a9877b;
+    --t-dend: #c3a294;
+    --t-derm: #dcbfc3;
+    --t-collagen: #c79ca2;
+    --t-vessel: #b03636;
+    --t-fol: #d8c6bf;
+    --t-fol-edge: #b99a90;
+    --t-pap: #d7adb2;
+    --side-sc: #c7b6af;
+    --side-epi: #c9b6af;
+    --side-derm: #c4a3a8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1118;
+  --surface: #171a23;
+  --surface-2: #1e2230;
+  --ink: #eceef6;
+  --ink-2: #b6bbcc;
+  --ink-3: #8c92a7;
+  --line: #282d3b;
+  --line-strong: #3a4154;
+  --accent: #a598ff;
+  --accent-ink: #14112a;
+  --accent-soft: #262246;
+  --eu: #9a5422;
+  --ph: #e8692e;
+  --uv: #a48cff;
+  --track-edge: rgba(255, 255, 255, .16);
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  --dock-shadow: 0 -10px 30px rgba(0, 0, 0, .5);
+  --grid-dot: rgba(165, 152, 255, .12);
+  --t-sc: #d9c9c2;
+  --t-epi: #e2d2cc;
+  --t-epi-line: #c4aaa2;
+  --t-nuc: #6a5aa8;
+  --t-mc: #d8bdb1;
+  --t-mc-line: #a9877b;
+  --t-dend: #c3a294;
+  --t-derm: #dcbfc3;
+  --t-collagen: #c79ca2;
+  --t-vessel: #b03636;
+  --t-fol: #d8c6bf;
+  --t-fol-edge: #b99a90;
+  --t-pap: #d7adb2;
+  --side-sc: #c7b6af;
+  --side-epi: #c9b6af;
+  --side-derm: #c4a3a8;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+
+/* ---------- masthead ---------- */
+.masthead { display: grid; gap: 10px; padding-block: 4px 22px; max-width: 46rem; }
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 8vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+h1 .h1-mol { color: var(--accent); }
+.lead { margin: 0; color: var(--ink-2); font-size: 1.06rem; max-width: 40rem; }
+
+/* ---------- layout ---------- */
+.layout { display: grid; gap: 20px; }
+.main { display: grid; gap: 20px; min-width: 0; }
+@media (min-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+  .main { grid-column: 1; grid-row: 1; }
+  .controls { grid-column: 2; grid-row: 1; position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+@media (max-width: 480px) { .card { padding: 16px; } }
+.card-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.card h2, .controls h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.32rem;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.sub { margin: -8px 0 0; color: var(--ink-2); font-size: .95rem; }
+
+/* ---------- specimen ---------- */
+.specimen { container-type: inline-size; container-name: spec; }
+.sp-grid { display: grid; gap: 16px; }
+@container spec (min-width: 700px) {
+  .sp-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+}
+.sp-figure {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 10px 6px 8px;
+  background-color: var(--surface-2);
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1.2px);
+  background-size: 14px 14px;
+}
+.sp-figure svg { display: block; width: 100%; max-width: 520px; height: auto; margin: 0 auto; }
+.sp-figure figcaption { font-size: .82rem; color: var(--ink-3); text-align: center; padding-inline: 8px; }
+.gkey { display: inline-block; width: .62em; height: .62em; border-radius: 50%; vertical-align: .02em; margin: 0 .25em 0 .5em; box-shadow: 0 0 0 1px var(--track-edge); }
+.gkey.eu { background: #3b2417; }
+.gkey.ph { background: #c8642c; }
+
+.sp-side { display: grid; gap: 14px; min-width: 0; align-content: start; }
+.readouts {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas: "skin hair" "ft ft" "mel mel";
+}
+.ro {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+.ro-label { font-size: .78rem; color: var(--ink-3); letter-spacing: .02em; }
+.ro-skin { grid-area: skin; }
+.ro-hair { grid-area: hair; }
+.ro-ft { grid-area: ft; }
+.ro-mel { grid-area: mel; }
+.ro-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.sw {
+  flex: none;
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 1px var(--track-edge);
+}
+.ro-val { font-weight: 700; font-size: 1rem; line-height: 1.2; overflow-wrap: anywhere; }
+.mono { font-family: var(--font-mono); font-size: .9rem; font-weight: 500; letter-spacing: .01em; }
+.ft-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ft-scale { display: flex; gap: 3px; }
+.ft-scale span {
+  width: 30px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  font-weight: 500;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.ft-scale span.on { font-weight: 700; box-shadow: 0 0 0 2px var(--accent); }
+.ft-desc { font-size: .9rem; color: var(--ink-2); line-height: 1.3; }
+.mel-bar { display: flex; height: 12px; gap: 2px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.mel-bar span { display: block; height: 100%; transition: flex-grow .12s linear; min-width: 0; }
+.mel-bar .eu { background: var(--eu); }
+.mel-bar .ph { background: var(--ph); }
+.mel-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .86rem; color: var(--ink-2); }
+.mel-legend b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.mel-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.mel-legend i.eu { background: var(--eu); }
+.mel-legend i.ph { background: var(--ph); }
+
+.status {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+.status strong { color: var(--accent); font-weight: 700; }
+
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.presets-label { font-size: .85rem; color: var(--ink-3); margin-right: 2px; }
+.preset {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px 6px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-size: .88rem;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.preset:hover { border-color: var(--accent); }
+.preset[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.preset .dot { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--track-edge); flex: none; }
+
+/* specimen svg pieces */
+.sp-label { fill: var(--ink-2); font-family: var(--font-body); font-size: 11.5px; }
+.sp-uvlabel { fill: var(--ink-2); font-family: var(--font-mono); font-size: 11px; font-weight: 500; }
+.sp-leader { stroke: var(--ink-3); stroke-width: .8; }
+.sp-dot { fill: var(--ink-2); }
+.sp-scale { stroke: var(--ink-2); stroke-width: 1.4; }
+.edge { fill: none; stroke: var(--ink-3); stroke-opacity: .5; stroke-width: 1; stroke-linejoin: round; }
+.side-sc { fill: var(--side-sc); }
+.side-epi { fill: var(--side-epi); }
+.side-derm { fill: var(--side-derm); }
+.derm { fill: var(--t-derm); }
+.collagen { fill: none; stroke: var(--t-collagen); stroke-width: 1; opacity: .8; }
+.vessel { fill: none; stroke: var(--t-vessel); stroke-width: 2.2; stroke-linecap: round; opacity: .8; }
+.vessel-main { stroke-width: 3.2; opacity: .7; }
+.epi { fill: var(--t-epi); }
+.sc { fill: var(--t-sc); }
+.sc-line { stroke: var(--t-epi-line); stroke-width: .7; }
+.kc { fill: var(--t-epi); stroke: var(--t-epi-line); stroke-width: .8; }
+.kn { fill: var(--t-nuc); opacity: .55; }
+.mc { fill: var(--t-mc); stroke: var(--t-mc-line); stroke-width: .9; }
+.mcd { fill: none; stroke: var(--t-dend); stroke-width: 2.4; stroke-linecap: round; }
+.fol-edge { stroke: var(--t-fol-edge); stroke-width: 15; stroke-linecap: round; }
+.fol-sheath { stroke: var(--t-fol); stroke-width: 12.5; stroke-linecap: round; }
+.fol-bulb { fill: var(--t-fol); stroke: var(--t-fol-edge); stroke-width: 1; }
+.fol-pap { fill: var(--t-pap); }
+.hair-out { fill: none; stroke: rgba(20, 14, 10, .38); stroke-width: 5; stroke-linecap: round; }
+.hair { fill: none; stroke-width: 3.3; stroke-linecap: round; }
+.uv-ray { fill: none; stroke: var(--uv); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.uv-head { fill: var(--uv); }
+
+/* ---------- controls ---------- */
+.controls {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.ctl-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.ctl-top h2 { font-size: 1.15rem; }
+.ctl-summary { font-family: var(--font-mono); font-size: .78rem; color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.dock-toggle {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: .82rem;
+  cursor: pointer;
+  flex: none;
+}
+.ctl-body { display: grid; gap: 18px; }
+.ctl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name val" "range range" "hint hint";
+  gap: 6px 10px;
+  align-items: center;
+}
+.ctl-name { grid-area: name; font-weight: 700; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl-name .gene {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  letter-spacing: .03em;
+}
+.ctl-val { grid-area: val; font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
+.ctl input[type="range"] { grid-area: range; }
+.ctl-hint { grid-area: hint; margin: 0; font-size: .85rem; color: var(--ink-3); line-height: 1.4; }
+.name-short { display: none; }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  --track: var(--surface-2);
+  --thumb: #ffffff;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px var(--track-edge);
+}
+input[type="range"]::-moz-range-track {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px var(--track-edge);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px; height: 26px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--thumb);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 6px rgba(0, 0, 0, .3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--thumb);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 6px rgba(0, 0, 0, .3);
+}
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--accent), 0 0 0 7px var(--accent-soft); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 2px var(--accent), 0 0 0 7px var(--accent-soft); }
+
+@media (min-width: 860px) {
+  .dock-toggle, .ctl-summary { display: none; }
+}
+@media (max-width: 859.98px) {
+  .page { padding-bottom: calc(var(--dock-h, 190px) + 28px); }
+  .controls {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 30;
+    border: 0;
+    border-top: 1px solid var(--line-strong);
+    border-radius: 16px 16px 0 0;
+    box-shadow: var(--dock-shadow);
+    padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    gap: 6px;
+  }
+  .controls > * { width: 100%; max-width: 640px; margin-inline: auto; }
+  .ctl-top h2 { font-size: .98rem; }
+  .ctl-summary { display: none; }
+  .controls[data-collapsed="true"] .ctl-summary { display: block; }
+  .controls[data-collapsed="true"] .ctl-body { display: none; }
+  .ctl-body { gap: 2px; }
+  .ctl {
+    grid-template-columns: 5.6rem minmax(0, 1fr) 2.9rem;
+    grid-template-areas: "name range val";
+    gap: 10px;
+  }
+  .ctl-name { font-size: .92rem; }
+  .ctl-name .gene, .ctl-hint, .name-long { display: none; }
+  .name-short { display: inline; }
+}
+
+/* ---------- chart ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.lg-line { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+.lg-line.eu { background: var(--eu); }
+.lg-line.ph { background: var(--ph); }
+.lg-strip { width: 22px; height: 10px; border-radius: 3px; display: inline-block; box-shadow: inset 0 0 0 1px var(--track-edge); background: var(--strip-preview, linear-gradient(90deg, #f1d1bf, #9b6847, #3a2620)); }
+.chart-wrap {
+  position: relative;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: crosshair;
+  border-radius: 8px;
+}
+.chart-wrap svg { display: block; }
+.chart-wrap text { font-family: var(--font-body); }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-axis { stroke: var(--line-strong); stroke-width: 1; }
+.c-tick { fill: var(--ink-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.c-title { fill: var(--ink-3); font-size: 11px; }
+.c-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.c-line.eu { stroke: var(--eu); }
+.c-line.ph { stroke: var(--ph); }
+.c-area.eu { fill: var(--eu); opacity: .1; }
+.c-area.ph { fill: var(--ph); opacity: .1; }
+.c-dot { stroke: var(--surface); stroke-width: 2; }
+.c-dot.eu { fill: var(--eu); }
+.c-dot.ph { fill: var(--ph); }
+.c-now { stroke: var(--accent); stroke-width: 1.5; }
+.c-lab { fill: var(--ink-2); font-size: 12px; font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.c-strip-edge { fill: none; stroke: var(--track-edge); }
+.c-strip-mark { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; }
+.c-cross { stroke: var(--ink-3); stroke-width: 1; }
+.tip {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 3;
+  pointer-events: none;
+  min-width: 160px;
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow);
+  font-size: .82rem;
+  color: var(--ink-2);
+}
+.tip[hidden] { display: none; }
+.tip-title { font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.tip-row { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.tip-row b { color: var(--ink); font-variant-numeric: tabular-nums; min-width: 2.6rem; }
+.tip-key { width: 12px; height: 3px; border-radius: 2px; flex: none; }
+.tip-key.eu { background: var(--eu); }
+.tip-key.ph { background: var(--ph); }
+.tip-sw { width: 12px; height: 12px; border-radius: 3px; flex: none; box-shadow: inset 0 0 0 1px var(--track-edge); }
+.chart-note { margin: 0; font-size: .92rem; color: var(--ink-2); max-width: 62ch; }
+.table-view summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: .92rem; width: fit-content; }
+.table-scroll { overflow-x: auto; margin-top: 10px; }
+.table-view table { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; min-width: 360px; }
+.table-view th, .table-view td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.table-view th { color: var(--ink-3); font-weight: 700; font-size: .8rem; }
+.table-view th:first-child, .table-view td:first-child { text-align: left; }
+.table-view td .cc { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: .8rem; }
+.table-view tr.is-now td { background: var(--accent-soft); }
+
+/* ---------- pathway ---------- */
+.path { list-style: none; margin: 0; padding: 0; display: grid; }
+.step { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 14px; position: relative; padding-bottom: 20px; }
+.step:last-child { padding-bottom: 0; }
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 16px; top: 38px; bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.step-num {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: .9rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.step-body { min-width: 0; display: grid; gap: 6px; }
+.step h3 { margin: 5px 0 0; font-size: 1.03rem; line-height: 1.3; }
+.step p { margin: 0; color: var(--ink-2); font-size: .95rem; max-width: 62ch; }
+.meters { display: grid; gap: 6px; margin-top: 2px; }
+.meter { display: grid; grid-template-columns: 7.6rem minmax(0, 1fr) 4.4rem; align-items: center; gap: 10px; font-size: .86rem; color: var(--ink-2); }
+.meter-track { height: 8px; border-radius: 999px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.meter-fill { display: block; height: 100%; width: calc(var(--v, 0) * 100%); border-radius: 999px; background: var(--accent); transition: width .12s linear; }
+.meter-fill.eu { background: var(--eu); }
+.meter-fill.ph { background: var(--ph); }
+.meter-val { text-align: right; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.result-row { display: flex; align-items: center; gap: 10px; font-size: .9rem; color: var(--ink-2); }
+.result-row .sw { width: 28px; height: 28px; border-radius: 7px; }
+
+/* ---------- facts ---------- */
+.facts ul { margin: 0; padding-left: 1.15rem; display: grid; gap: 9px; max-width: 66ch; }
+.facts li::marker { color: var(--accent); }
+.facts li strong { color: var(--ink); }
+.caveat { margin: 0; font-size: .87rem; color: var(--ink-3); max-width: 70ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Biologia · Melanogênese</p>
+    <h1>Simulador de <span class="h1-mol">Melanina</span></h1>
+    <p class="lead">Arraste os controles e veja a pele mudar de cor. Cada controle é uma peça real da produção de melanina: a enzima tirosinase, o receptor MC1R e o sol.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="controls" id="controls" aria-label="Controles do simulador">
+      <div class="ctl-top">
+        <h2>Controles</h2>
+        <span class="ctl-summary" id="ctl-summary" aria-hidden="true"></span>
+        <button type="button" class="dock-toggle" id="dock-toggle" aria-expanded="true" aria-controls="ctl-body">Ocultar</button>
+      </div>
+      <div class="ctl-body" id="ctl-body">
+        <div class="ctl">
+          <label class="ctl-name" for="in-tyr"><span class="gene">TYR</span><span class="name-long">Tirosinase</span><span class="name-short">Tirosinase</span></label>
+          <output class="ctl-val" id="out-tyr" for="in-tyr">40%</output>
+          <input type="range" id="in-tyr" min="0" max="100" step="1" value="40" aria-describedby="hint-tyr">
+          <p class="ctl-hint" id="hint-tyr">Enzima que transforma a tirosina em melanina. Sem ela, não há pigmento.</p>
+        </div>
+        <div class="ctl">
+          <label class="ctl-name" for="in-mc1r"><span class="gene">MC1R</span><span class="name-long">Receptor MC1R</span><span class="name-short">MC1R</span></label>
+          <output class="ctl-val" id="out-mc1r" for="in-mc1r">75%</output>
+          <input type="range" id="in-mc1r" min="0" max="100" step="1" value="75" aria-describedby="hint-mc1r">
+          <p class="ctl-hint" id="hint-mc1r">Escolhe o tipo de melanina: ativo faz eumelanina (marrom), fraco faz feomelanina (avermelhada).</p>
+        </div>
+        <div class="ctl">
+          <label class="ctl-name" for="in-uv"><span class="gene">UV</span><span class="name-long">Sol</span><span class="name-short">Sol (UV)</span></label>
+          <output class="ctl-val" id="out-uv" for="in-uv">0%</output>
+          <input type="range" id="in-uv" min="0" max="100" step="1" value="0" aria-describedby="hint-uv">
+          <p class="ctl-hint" id="hint-uv">O sol ativa o MC1R e aumenta a tirosinase. É assim que a pele bronzeia.</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="card specimen" aria-labelledby="sp-title">
+        <div class="card-head">
+          <h2 id="sp-title">Amostra de pele</h2>
+          <span class="tag">Corte esquemático</span>
+        </div>
+        <div class="sp-grid">
+          <figure class="sp-figure">
+            <svg id="specimen" viewBox="0 0 360 322" role="img" aria-label="Corte esquemático da pele"></svg>
+            <figcaption>Cada pontinho é um melanossomo:<span class="gkey eu"></span>eumelanina<span class="gkey ph"></span>feomelanina</figcaption>
+          </figure>
+          <div class="sp-side">
+            <div class="readouts">
+              <div class="ro ro-skin">
+                <span class="ro-label">Cor da pele</span>
+                <div class="ro-main"><span class="sw" id="ro-skin-sw"></span><span class="ro-val mono" id="ro-skin-hex">#c18e6a</span></div>
+              </div>
+              <div class="ro ro-hair">
+                <span class="ro-label">Cabelo</span>
+                <div class="ro-main"><span class="sw" id="ro-hair-sw"></span><span class="ro-val" id="ro-hair-name">castanho</span></div>
+              </div>
+              <div class="ro ro-ft">
+                <span class="ro-label">Fototipo (escala de Fitzpatrick)</span>
+                <div class="ft-row">
+                  <div class="ft-scale" id="ft-scale" aria-hidden="true"><span>I</span><span>II</span><span>III</span><span>IV</span><span>V</span><span>VI</span></div>
+                  <span class="ft-desc" id="ft-desc">Fototipo III: às vezes queima, bronzeia aos poucos</span>
+                </div>
+              </div>
+              <div class="ro ro-mel">
+                <span class="ro-label">Melanina na pele · total <b class="mono" id="mel-total">0,27</b> u.a.</span>
+                <div class="mel-bar" aria-hidden="true"><span class="eu" id="mel-eu"></span><span class="ph" id="mel-ph"></span></div>
+                <div class="mel-legend"><span><i class="eu"></i><b id="mel-eu-pct">73%</b> eumelanina</span><span><i class="ph"></i><b id="mel-ph-pct">27%</b> feomelanina</span></div>
+              </div>
+            </div>
+            <p class="status" id="status" aria-live="polite"></p>
+            <div class="presets" id="presets">
+              <span class="presets-label">Experimente:</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card chart-card" aria-labelledby="ch-title">
+        <div class="card-head">
+          <h2 id="ch-title">Mais tirosinase, mais melanina</h2>
+          <span class="tag">Gráfico</span>
+        </div>
+        <p class="sub" id="chart-sub">Com o MC1R em 75% e o sol em 0%. Toque ou arraste no gráfico para escolher a tirosinase.</p>
+        <div class="legend">
+          <span><i class="lg-line eu"></i>Eumelanina (marrom-preta)</span>
+          <span><i class="lg-line ph"></i>Feomelanina (vermelho-amarela)</span>
+          <span><i class="lg-strip" id="lg-strip"></i>Cor da pele que resulta</span>
+        </div>
+        <div class="chart-wrap" id="chart-wrap" tabindex="0" role="group" aria-label="Gráfico de eumelanina e feomelanina conforme a tirosinase. Use as setas para mudar a tirosinase.">
+          <svg id="chart" aria-hidden="true"></svg>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <p class="chart-note">Repare: a feomelanina aparece primeiro e logo para de subir, porque a cisteína acaba. Daí em diante, quase toda a melanina nova é eumelanina. Um MC1R mais fraco deixa mais cisteína disponível, então a feomelanina vai mais longe.</p>
+        <details class="table-view" id="table-view">
+          <summary>Ver os valores em tabela</summary>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Tirosinase</th><th scope="col">Eumelanina (u.a.)</th><th scope="col">Feomelanina (u.a.)</th><th scope="col">Cor da pele</th></tr></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="card path-card" aria-labelledby="pa-title">
+        <div class="card-head">
+          <h2 id="pa-title">Da luz do sol à cor da pele</h2>
+          <span class="tag">Via da melanina</span>
+        </div>
+        <p class="sub">A cor depende de uma sequência de etapas. Os valores mudam junto com os controles.</p>
+        <ol class="path">
+          <li class="step">
+            <span class="step-num">1</span>
+            <div class="step-body">
+              <h3>O sol chega à pele</h3>
+              <p>A radiação UV faz os queratinócitos liberarem o hormônio α-MSH. Mesmo sem sol, um pouco dele sempre circula.</p>
+              <div class="meters">
+                <div class="meter"><span>α-MSH</span><span class="meter-track"><span class="meter-fill" id="m-msh"></span></span><span class="meter-val" id="v-msh">70%</span></div>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">2</span>
+            <div class="step-body">
+              <h3>O MC1R recebe o recado</h3>
+              <p>O α-MSH se encaixa no receptor MC1R do melanócito. O sinal (AMPc) liga a proteína MITF, que manda fabricar mais tirosinase.</p>
+              <div class="meters">
+                <div class="meter"><span>Sinal do MC1R</span><span class="meter-track"><span class="meter-fill" id="m-sig"></span></span><span class="meter-val" id="v-sig">53%</span></div>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">3</span>
+            <div class="step-body">
+              <h3>A tirosinase faz a dopaquinona</h3>
+              <p>A tirosinase transforma a tirosina em L-DOPA e depois em dopaquinona. É a etapa mais lenta, por isso ela controla quanta melanina sai.</p>
+              <div class="meters">
+                <div class="meter"><span>Dopaquinona</span><span class="meter-track"><span class="meter-fill" id="m-dq"></span></span><span class="meter-val" id="v-dq">0,36</span></div>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">4</span>
+            <div class="step-body">
+              <h3>A cisteína decide o tipo</h3>
+              <p>A dopaquinona reage primeiro com a cisteína e vira feomelanina. Quando a cisteína acaba, o resto vira eumelanina. Com o MC1R ativo sobra pouca cisteína, então sai mais eumelanina.</p>
+              <div class="meters">
+                <div class="meter"><span>Feomelanina</span><span class="meter-track"><span class="meter-fill ph" id="m-ph"></span></span><span class="meter-val" id="v-ph">0,07</span></div>
+                <div class="meter"><span>Eumelanina</span><span class="meter-track"><span class="meter-fill eu" id="m-eu"></span></span><span class="meter-val" id="v-eu">0,20</span></div>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-num">5</span>
+            <div class="step-body">
+              <h3>A melanina chega aos queratinócitos</h3>
+              <p>Os melanossomos passam pelos dendritos do melanócito e formam um capuz sobre o núcleo das células, protegendo o DNA do UV. É essa melanina que vemos como cor da pele.</p>
+              <div class="result-row"><span class="sw" id="r-sw"></span><span>Resultado: <b class="mono" id="r-hex">#c18e6a</b></span></div>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="card facts" aria-labelledby="fa-title">
+        <div class="card-head">
+          <h2 id="fa-title">Para lembrar</h2>
+        </div>
+        <ul>
+          <li>Pele clara e pele escura têm quase o mesmo número de melanócitos. O que muda é <strong>quanta melanina</strong> eles produzem e <strong>de que tipo</strong>.</li>
+          <li><strong>Eumelanina</strong> é marrom ou preta e protege bem do UV. <strong>Feomelanina</strong> é avermelhada ou amarelada e protege pouco.</li>
+          <li>No <strong>albinismo tipo 1 (OCA1)</strong>, o gene TYR não funciona. Sem tirosinase, pele, cabelo e olhos ficam quase sem pigmento.</li>
+          <li>Variantes do gene <strong>MC1R</strong> são comuns em pessoas ruivas: mais feomelanina, sardas e queimadura fácil.</li>
+          <li>O <strong>bronzeado</strong> aparece de 2 a 3 dias depois do sol. É uma defesa: mais eumelanina por cima do núcleo das células.</li>
+        </ul>
+        <p class="caveat">Modelo simplificado para estudo. Na vida real, vários genes atuam juntos (como SLC24A5, SLC45A2, OCA2 e HERC2), e os valores aqui estão em unidades arbitrárias (u.a.), não em medidas de laboratório.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+/* MODEL START */
+const SK_C0 = 0.03, SK_C1 = 0.20;   // cisteína disponível na pele
+const HR_C0 = 0.012, HR_C1 = 0.13;  // cisteína no folículo do pelo
+const SKIN_EU = [[0, '#f4ddd3'], [.06, '#f1d1bf'], [.14, '#e5bb9f'], [.25, '#d1a07e'], [.38, '#b98560'], [.52, '#9b6847'], [.68, '#7b4f36'], [.84, '#5a3828'], [1, '#3a2620']];
+const SKIN_PH = [[0, '#f4ddd3'], [.08, '#f3d0b5'], [.20, '#e7b48c'], [.38, '#cf9163'], [.60, '#ad6c43'], [.80, '#87502f'], [1, '#5e3624']];
+const HAIR_EU = [[0, '#efe9dc'], [.12, '#e4d2a6'], [.25, '#cfa96c'], [.40, '#a47d4c'], [.55, '#7b5a3d'], [.70, '#5a3f2c'], [.85, '#3a2a20'], [1, '#1d1714']];
+const HAIR_RED = [[0, '#efe9dc'], [.22, '#dca36d'], [.45, '#bd5f30'], [.70, '#8f3e25'], [1, '#4d241c']];
+const BURN_HEX = '#e07a6a';
+
+const clamp01 = v => Math.min(1, Math.max(0, v));
+const s2l = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+const l2s = l => { l = clamp01(l); const c = l <= 0.0031308 ? 12.92 * l : 1.055 * Math.pow(l, 1 / 2.4) - 0.055; return Math.round(c * 255); };
+const hexToRgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+function lin2lab(c) {
+  const [r, g, b] = c;
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+          1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+          0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s];
+}
+function lab2lin(L) {
+  const l_ = L[0] + 0.3963377774 * L[1] + 0.2158037573 * L[2];
+  const m_ = L[0] - 0.1055613458 * L[1] - 0.0638541728 * L[2];
+  const s_ = L[0] - 0.0894841775 * L[1] - 1.2914855480 * L[2];
+  const l = l_ * l_ * l_, m = m_ * m_ * m_, s = s_ * s_ * s_;
+  return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+          -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+          -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s];
+}
+const hexToLab = h => lin2lab(hexToRgb(h).map(s2l));
+const labToHex = L => '#' + lab2lin(L).map(l2s).map(v => v.toString(16).padStart(2, '0')).join('');
+const mixLab = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const prep = series => series.map(([x, h]) => [x, hexToLab(h)]);
+const R_SKIN_EU = prep(SKIN_EU), R_SKIN_PH = prep(SKIN_PH), R_HAIR_EU = prep(HAIR_EU), R_HAIR_RED = prep(HAIR_RED);
+const BURN_LAB = hexToLab(BURN_HEX);
+function ramp(series, x) {
+  x = clamp01(x);
+  for (let i = 1; i < series.length; i++) {
+    const [x1, c1] = series[i];
+    if (x <= x1) { const [x0, c0] = series[i - 1]; return mixLab(c0, c1, (x - x0) / (x1 - x0)); }
+  }
+  return series[series.length - 1][1];
+}
+const smooth = (e0, e1, x) => { const t = clamp01((x - e0) / (e1 - e0)); return t * t * (3 - 2 * t); };
+
+/* Modelo de "casca" da melanogênese mista: a dopaquinona vira feomelanina enquanto
+   houver cisteína; o que sobra vira eumelanina. O MC1R diminui a cisteína disponível
+   e aumenta a tirosinase; o UV aumenta o α-MSH que ativa o MC1R. */
+function pigments(tyr, mc1r, uv, c0, c1) {
+  const msh = 0.7 + 0.3 * uv;
+  const S = mc1r * msh;
+  const D = tyr * (0.6 + 0.4 * mc1r) * (1 + 0.7 * uv * mc1r);
+  const C = c0 + c1 * (1 - S) * (1 - S);
+  const P = D > 0 ? C * (1 - Math.exp(-D / C)) : 0;
+  const E = (D - P) * (0.35 + 0.65 * S);
+  return { msh, S, D, C, E, P };
+}
+function soft(y, k = 0.85) { return y < k ? y : k + (1 - k) * (1 - Math.exp(-(y - k) / (1 - k))); }
+function skinIndex(E, P) { const m = E + 0.45 * P; return m > 0 ? soft(1.092 * Math.pow(m, 0.8)) : 0; }
+function skinHex(E, P, burn) {
+  const x = skinIndex(E, P);
+  const r = E + P > 1e-6 ? P / (E + P) : 0;
+  const b = 0.85 * smooth(0.35, 0.9, r);
+  let L = mixLab(ramp(R_SKIN_EU, x), ramp(R_SKIN_PH, x), b);
+  const w = 0.55 * burn * Math.pow(1 - x, 1.3);
+  L = mixLab(L, BURN_LAB, w);
+  return labToHex(L);
+}
+function burnOf(tyr, mc1r, uv) {
+  const p0 = pigments(tyr, mc1r, 0, SK_C0, SK_C1);
+  return uv * Math.exp(-7 * (p0.E + 0.2 * p0.P));
+}
+function skinAt(tyr, mc1r, uv) {
+  const p = pigments(tyr, mc1r, uv, SK_C0, SK_C1);
+  return skinHex(p.E, p.P, burnOf(tyr, mc1r, uv));
+}
+function hairName(L, red) {
+  if (L < 0.05) return 'branco';
+  if (red > 0.5) return L < 0.3 ? 'loiro-avermelhado' : L < 0.58 ? 'ruivo' : L < 0.85 ? 'castanho-avermelhado' : 'castanho-avermelhado escuro';
+  const steps = [[0.17, 'loiro-platinado'], [0.32, 'loiro'], [0.47, 'loiro-escuro'], [0.62, 'castanho-claro'], [0.77, 'castanho'], [0.92, 'castanho-escuro']];
+  for (const [t, n] of steps) if (L < t) return n;
+  return 'preto';
+}
+function hairInfo(tyr, mc1r) {
+  const p = pigments(tyr, mc1r, 0, HR_C0, HR_C1);
+  const L = 1 - Math.exp(-5 * (p.E + 0.6 * p.P));
+  const r = p.E + p.P > 1e-6 ? p.P / (p.E + p.P) : 0;
+  const red = smooth(0.38, 0.62, r);
+  return { hex: labToHex(mixLab(ramp(R_HAIR_EU, L), ramp(R_HAIR_RED, L), red)), name: hairName(L, red), L, pheo: r, E: p.E, P: p.P };
+}
+const FT = [
+  ['I', 'sempre queima, nunca bronzeia'],
+  ['II', 'queima fácil, bronzeia pouco'],
+  ['III', 'às vezes queima, bronzeia aos poucos'],
+  ['IV', 'raramente queima, bronzeia fácil'],
+  ['V', 'muito raramente queima, bronzeia muito'],
+  ['VI', 'quase nunca queima, pele muito pigmentada']
+];
+function compute(tyr, mc1r, uv) {
+  const p = pigments(tyr, mc1r, uv, SK_C0, SK_C1);
+  const p0 = pigments(tyr, mc1r, 0, SK_C0, SK_C1);
+  const p1 = pigments(tyr, mc1r, 1, SK_C0, SK_C1);
+  const burn = uv * Math.exp(-7 * (p0.E + 0.2 * p0.P));
+  const x0 = skinIndex(p0.E, p0.P), x1 = skinIndex(p1.E, p1.P);
+  let ft = 1 + [0.12, 0.22, 0.36, 0.54, 0.78].filter(t => x0 >= t).length;
+  if (x1 - x0 < 0.04 && ft > 1) ft -= 1;
+  const tot = p.E + p.P;
+  const freckle = (1 - smooth(0.12, 0.55, mc1r)) * (0.4 + 0.6 * uv) * smooth(0.02, 0.15, tyr);
+  return {
+    tyr, mc1r, uv, msh: p.msh, S: p.S, D: p.D, E: p.E, P: p.P, burn, x0, x1, ft,
+    skin: skinHex(p.E, p.P, burn),
+    pheoFrac: tot > 1e-6 ? p.P / tot : 0,
+    density: 1 - Math.exp(-2.6 * tot),
+    freckle,
+    freckleHex: skinHex(p.E * 1.6 + 0.03, p.P * 2.0 + 0.08, 0),
+    hair: hairInfo(tyr, mc1r)
+  };
+}
+/* MODEL END */
+
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = id => document.getElementById(id);
+  const fmt2 = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtTick = v => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(v);
+  const pct = v => Math.round(v * 100) + '%';
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const GRAN_EU = '#3b2417', GRAN_PH = '#c8642c';
+
+  const state = { tyr: 0.40, mc1r: 0.75, uv: 0 };
+  const inputs = { tyr: $('in-tyr'), mc1r: $('in-mc1r'), uv: $('in-uv') };
+  const outs = { tyr: $('out-tyr'), mc1r: $('out-mc1r'), uv: $('out-uv') };
+
+  function mk(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function inkOn(hex) {
+    const [r, g, b] = hexToRgb(hex).map(s2l);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.3 ? '#1b1410' : '#ffffff';
+  }
+
+  /* ---------- amostra (corte da pele) ---------- */
+  const J = x => 182 + 6 * Math.sin(2 * Math.PI * (x - 120) / 60);
+  const follX = y => 262 + (278 - y) * (14 / 168);
+  const SPEC = { gran: [], freckles: [], hairGran: [] };
+
+  function buildSpecimen() {
+    const svg = $('specimen');
+    const rnd = mulberry32(11);
+    const f1 = v => v.toFixed(1);
+    svg.textContent = '';
+    const defs = mk('defs', null, svg);
+    const cf = mk('clipPath', { id: 'sp-clip-front' }, defs);
+    mk('rect', { x: 110, y: 110, width: 186, height: 190 }, cf);
+    const topPts = '110,110 296,110 346,40 160,40';
+    const ct = mk('clipPath', { id: 'sp-clip-top' }, defs);
+    mk('polygon', { points: topPts }, ct);
+    const gTop = mk('linearGradient', { id: 'sp-top-shade', x1: 0, y1: 40, x2: 0, y2: 110, gradientUnits: 'userSpaceOnUse' }, defs);
+    mk('stop', { offset: 0, 'stop-color': '#ffffff', 'stop-opacity': 0.24 }, gTop);
+    mk('stop', { offset: 1, 'stop-color': '#ffffff', 'stop-opacity': 0 }, gTop);
+    const mrk = mk('marker', { id: 'sp-arrow', viewBox: '0 0 8 8', refX: 5, refY: 4, markerWidth: 6, markerHeight: 6, orient: 'auto' }, defs);
+    mk('path', { d: 'M0,0 L8,4 L0,8 z', class: 'uv-head' }, mrk);
+
+    // face lateral
+    const Jr = J(296);
+    mk('polygon', { points: '296,110 346,40 346,46 296,116', class: 'side-sc' }, svg);
+    mk('polygon', { points: `296,116 346,46 346,${f1(Jr - 70)} 296,${f1(Jr)}`, class: 'side-epi' }, svg);
+    mk('polygon', { points: `296,${f1(Jr)} 346,${f1(Jr - 70)} 346,230 296,300`, class: 'side-derm' }, svg);
+
+    // face frontal (corte)
+    const front = mk('g', { 'clip-path': 'url(#sp-clip-front)' }, svg);
+    let jFwd = '', jBack = '';
+    for (let x = 110; x <= 296; x += 2) jFwd += ` L${x},${f1(J(x))}`;
+    for (let x = 296; x >= 110; x -= 2) jBack += ` L${x},${f1(J(x))}`;
+    mk('path', { d: `M110,300 L110,${f1(J(110))}${jFwd} L296,300 Z`, class: 'derm' }, front);
+    for (const y of [206, 222, 240, 256, 287]) {
+      let d = `M106,${y}`;
+      for (let x = 106; x <= 302; x += 6) d += ` L${x},${f1(y + 2.2 * Math.sin(x / 9 + y))}`;
+      mk('path', { d, class: 'collagen' }, front);
+    }
+    mk('path', { d: 'M104,272 C150,267 190,277 230,270 S280,267 304,272', class: 'vessel vessel-main' }, front);
+    for (const px of [165, 225]) {
+      const top = J(px) + 9;
+      mk('path', { d: `M${px - 5},271 C${px - 6},236 ${px - 4},${f1(top + 2)} ${px},${f1(top)} C${px + 4},${f1(top + 2)} ${px + 6},236 ${px + 5},271`, class: 'vessel' }, front);
+    }
+    mk('path', { d: `M110,110 L296,110${jBack} Z`, class: 'epi' }, front);
+    mk('line', { x1: 262, y1: 286, x2: 276, y2: 104, class: 'fol-edge' }, front);
+    mk('line', { x1: 262, y1: 286, x2: 276, y2: 104, class: 'fol-sheath' }, front);
+    mk('ellipse', { cx: 261.5, cy: 284, rx: 10.5, ry: 11.5, class: 'fol-bulb' }, front);
+    mk('ellipse', { cx: 261.5, cy: 291.5, rx: 4.5, ry: 5.5, class: 'fol-pap' }, front);
+    mk('rect', { x: 110, y: 110, width: 186, height: 7, class: 'sc' }, front);
+    mk('line', { x1: 110, x2: 296, y1: 112.6, y2: 112.6, class: 'sc-line' }, front);
+    mk('line', { x1: 110, x2: 296, y1: 115.2, y2: 115.2, class: 'sc-line' }, front);
+
+    const cells = mk('g', null, front);
+    const mcs = mk('g', null, front);
+    const gGran = mk('g', null, front);
+    const addGran = (x, y, r, t) => {
+      const el = mk('circle', { cx: f1(x), cy: f1(y), r }, gGran);
+      SPEC.gran.push({ el, t, u: rnd() });
+    };
+    const MELANO = [137, 197, 241];
+    function cell(cx, cy, w, h, factor, flat) {
+      if (Math.abs(cx - follX(cy)) < 13.5) return;
+      const x = cx + (rnd() - 0.5) * 1.6, y = cy + (rnd() - 0.5) * 1.2;
+      const ww = w + (rnd() - 0.5) * 2, hh = h + (rnd() - 0.5) * 1.2;
+      mk('rect', { x: f1(x - ww / 2), y: f1(y - hh / 2), width: f1(ww), height: f1(hh), rx: flat ? 3.5 : 5, class: 'kc' }, cells);
+      const ny = y + (flat ? 0.6 : 1.7);
+      mk('ellipse', { cx: f1(x), cy: f1(ny), rx: flat ? 4.2 : 3.3, ry: flat ? 1.5 : 2.5, class: 'kn' }, cells);
+      const capY = ny - (flat ? 2.5 : 3.7);
+      const offs = flat ? [-2.8, -0.9, 1, 2.9] : [-3.3, -1.1, 1.1, 3.3];
+      for (const o of offs) addGran(x + o, capY + (Math.abs(o) > 2 ? 0.9 : 0), 1.3, rnd() * factor);
+    }
+    for (let x = 120; x < 300; x += 23) cell(x, 122, 23, 8, 1.35, true);
+    for (let x = 112; x < 300; x += 21) cell(x, 136, 21, 13, 1.12, false);
+    for (let x = 122; x < 300; x += 20) cell(x, 151, 20, 13, 0.98, false);
+    for (let x = 114; x < 300; x += 12.5) {
+      if (MELANO.some(m => Math.abs(m - x) < 9)) continue;
+      cell(x, J(x) - 9, 11, 14, 0.85, false);
+    }
+    // melanócitos com dendritos
+    for (const mx of MELANO) {
+      const by = J(mx) - 8;
+      const dends = [
+        [mx - 3, by - 3, mx - 11, by - 16, mx - 18, by - 29],
+        [mx, by - 5, mx + 1, by - 22, mx - 1, by - 40],
+        [mx + 3, by - 3, mx + 12, by - 15, mx + 19, by - 28]
+      ];
+      for (const [x0, y0, cx, cy, x1, y1] of dends) {
+        mk('path', { d: `M${x0},${f1(y0)} Q${cx},${f1(cy)} ${x1},${f1(y1)}`, class: 'mcd' }, mcs);
+        for (const t of [0.35, 0.62, 0.86, 1]) {
+          const a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t;
+          addGran(a * x0 + b * cx + c * x1, a * y0 + b * cy + c * y1, 1.35, rnd() * 0.62);
+        }
+      }
+      mk('ellipse', { cx: mx, cy: f1(by), rx: 7.2, ry: 6.2, class: 'mc' }, mcs);
+      mk('ellipse', { cx: mx, cy: f1(by + 1), rx: 3, ry: 2.3, class: 'kn' }, mcs);
+      for (let k = 0; k < 6; k++) {
+        const ang = Math.PI * (1.05 + k * 0.17);
+        addGran(mx + Math.cos(ang) * 4.8, by + 1 + Math.sin(ang) * 3.6, 1.4, rnd() * 0.5);
+      }
+    }
+    // pelo dentro da pele + melanina do bulbo
+    mk('line', { x1: 262, y1: 279, x2: 276, y2: 110, class: 'hair-out' }, front);
+    SPEC.hairIn = mk('line', { x1: 262, y1: 279, x2: 276, y2: 110, class: 'hair' }, front);
+    for (const [hx, hy] of [[255.5, 284], [258, 280], [261.5, 278.6], [265, 280], [267.5, 284], [261.5, 283]]) {
+      SPEC.hairGran.push({ el: mk('circle', { cx: hx, cy: hy, r: 1.35 }, front), t: rnd() * 0.9, u: rnd() });
+    }
+
+    // superfície (vista de cima)
+    SPEC.top = mk('polygon', { points: topPts, class: 'top' }, svg);
+    mk('polygon', { points: topPts, fill: 'url(#sp-top-shade)' }, svg);
+    const fr = mk('g', { 'clip-path': 'url(#sp-clip-top)' }, svg);
+    for (let i = 0; i < 56; i++) {
+      const u = rnd(), v = rnd();
+      const rx = 1.3 + rnd() * 1.8;
+      SPEC.freckles.push({ el: mk('ellipse', { cx: f1(110 + 186 * u + 50 * v), cy: f1(110 - 70 * v), rx: rx.toFixed(2), ry: (rx * 0.62).toFixed(2) }, fr), t: rnd() });
+    }
+    mk('rect', { x: 110, y: 110, width: 186, height: 190, class: 'edge' }, svg);
+    mk('polygon', { points: topPts, class: 'edge' }, svg);
+    mk('polygon', { points: '296,110 346,40 346,230 296,300', class: 'edge' }, svg);
+
+    // pelo acima da superfície
+    const above = 'M276,110 C278.5,84 285,56 301,30';
+    mk('path', { d: above, class: 'hair-out' }, svg);
+    SPEC.hairTop = mk('path', { d: above, class: 'hair' }, svg);
+
+    // raios UV
+    SPEC.uv = mk('g', null, svg);
+    for (const sx of [126, 158, 190, 222]) {
+      const sy = 4, dx = 38, dy = 48, len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len;
+      let d = '';
+      for (let i = 0; i <= 30; i++) {
+        const s = i / 30, w = 2.4 * Math.sin(s * Math.PI * 8);
+        d += (i ? ' L' : 'M') + f1(sx + dx * s + nx * w) + ',' + f1(sy + dy * s + ny * w);
+      }
+      mk('path', { d, class: 'uv-ray', 'marker-end': 'url(#sp-arrow)' }, SPEC.uv);
+    }
+    const uvT = mk('text', { x: 118, y: 14, 'text-anchor': 'end', class: 'sp-uvlabel' }, SPEC.uv);
+    uvT.textContent = 'UV';
+
+    // rótulos
+    const labels = [
+      ['Superfície', 74, 152, 74],
+      ['Queratinócito', 132, 117, 135],
+      ['Melanina', 153, 125, 148.5],
+      ['Melanócito', 180, 132, 180],
+      ['Derme', 228, 126, 228],
+      ['Vaso sanguíneo', 271, 121, 271.5]
+    ];
+    const gl = mk('g', null, svg);
+    for (const [txt, y, tx, ty] of labels) {
+      mk('line', { x1: 103, y1: y, x2: tx - 2.2, y2: ty, class: 'sp-leader' }, gl);
+      mk('circle', { cx: tx, cy: ty, r: 1.7, class: 'sp-dot' }, gl);
+      const t = mk('text', { x: 100, y, dy: '0.35em', 'text-anchor': 'end', class: 'sp-label' }, gl);
+      t.textContent = txt;
+    }
+    const tp = mk('text', { x: 306, y: 26, dy: '0.35em', class: 'sp-label' }, gl);
+    tp.textContent = 'Pelo';
+    // barra de escala
+    mk('line', { x1: 110, x2: 180, y1: 313, y2: 313, class: 'sp-scale' }, gl);
+    mk('line', { x1: 110.7, x2: 110.7, y1: 309, y2: 317, class: 'sp-scale' }, gl);
+    mk('line', { x1: 179.3, x2: 179.3, y1: 309, y2: 317, class: 'sp-scale' }, gl);
+    const sc = mk('text', { x: 186, y: 313, dy: '0.35em', class: 'sp-label' }, gl);
+    sc.textContent = '0,1 mm';
+  }
+
+  function updateSpecimen(st) {
+    SPEC.top.style.fill = st.skin;
+    for (const g of SPEC.gran) {
+      const on = g.t < st.density;
+      g.el.style.display = on ? '' : 'none';
+      if (on) g.el.style.fill = g.u < st.pheoFrac ? GRAN_PH : GRAN_EU;
+    }
+    for (const f of SPEC.freckles) {
+      const on = f.t < st.freckle * 0.9;
+      f.el.style.display = on ? '' : 'none';
+      if (on) f.el.style.fill = st.freckleHex;
+    }
+    const hd = 1 - Math.exp(-4 * (st.hair.E + st.hair.P));
+    for (const g of SPEC.hairGran) {
+      const on = g.t < hd;
+      g.el.style.display = on ? '' : 'none';
+      if (on) g.el.style.fill = g.u < st.hair.pheo ? GRAN_PH : GRAN_EU;
+    }
+    SPEC.hairTop.style.stroke = st.hair.hex;
+    SPEC.hairIn.style.stroke = st.hair.hex;
+    SPEC.uv.style.display = st.uv > 0.005 ? '' : 'none';
+    SPEC.uv.style.opacity = (0.25 + 0.75 * st.uv).toFixed(2);
+    $('specimen').setAttribute('aria-label',
+      `Corte esquemático da pele. Cor ${st.skin}, fototipo ${FT[st.ft - 1][0]}, cabelo ${st.hair.name}.`);
+  }
+
+  /* ---------- leituras ---------- */
+  function updateReadouts(st) {
+    $('ro-skin-sw').style.background = st.skin;
+    $('ro-skin-hex').textContent = st.skin;
+    $('ro-hair-sw').style.background = st.hair.hex;
+    $('ro-hair-name').textContent = st.hair.name;
+    const spans = $('ft-scale').children;
+    for (let i = 0; i < spans.length; i++) {
+      const on = i === st.ft - 1;
+      spans[i].classList.toggle('on', on);
+      spans[i].style.background = on ? st.skin : '';
+      spans[i].style.color = on ? inkOn(st.skin) : '';
+    }
+    $('ft-desc').textContent = `Fototipo ${FT[st.ft - 1][0]}: ${FT[st.ft - 1][1]}`;
+    const tot = st.E + st.P;
+    const eu = tot > 1e-6 ? st.E / tot : 0, ph = tot > 1e-6 ? st.P / tot : 0;
+    $('mel-total').textContent = fmt2.format(tot);
+    $('mel-eu').style.flexGrow = eu.toFixed(4);
+    $('mel-ph').style.flexGrow = ph.toFixed(4);
+    $('mel-eu').style.display = eu > 0.001 ? '' : 'none';
+    $('mel-ph').style.display = ph > 0.001 ? '' : 'none';
+    $('mel-eu-pct').textContent = pct(eu);
+    $('mel-ph-pct').textContent = pct(ph);
+  }
+
+  function statusText(st) {
+    if (st.tyr < 0.03) return ['Sem tirosinase,', ' a tirosina não vira melanina. É o que acontece no albinismo tipo 1 (OCA1): pele rosada, cabelo branco e muita sensibilidade ao sol.'];
+    if (st.burn > 0.35) return ['Queimadura solar:', ' muito UV para pouca eumelanina. A pele fica vermelha antes de conseguir bronzear.'];
+    if (st.mc1r < 0.35) return ['MC1R pouco ativo:', ' a produção desvia para a feomelanina. Pele clara, sardas, cabelo avermelhado e quase nenhum bronzeado.'];
+    if (st.uv > 0.25) return ['Bronzeamento:', ' com sol, os queratinócitos liberam α-MSH, o MC1R ativa a tirosinase e sai mais eumelanina.'];
+    if (st.x0 > 0.7) return ['Muita eumelanina:', ' tirosinase alta com o MC1R ativo. Essa melanina absorve o UV e protege o DNA.'];
+    return ['O que define a cor:', ' quanta melanina os melanócitos produzem e de que tipo ela é.'];
+  }
+  function updateStatus(st) {
+    const [lead, rest] = statusText(st);
+    const el = $('status');
+    if (el.dataset.lead === lead) return;
+    el.dataset.lead = lead;
+    el.textContent = '';
+    const s = document.createElement('strong');
+    s.textContent = lead;
+    el.append(s, document.createTextNode(rest));
+  }
+
+  /* ---------- controles ---------- */
+  function gradientFor(fn) {
+    const stops = [];
+    for (let i = 0; i <= 10; i++) stops.push(`${fn(i / 10)} ${i * 10}%`);
+    return `linear-gradient(90deg, ${stops.join(', ')})`;
+  }
+  function updateControls(st) {
+    for (const k of ['tyr', 'mc1r', 'uv']) {
+      outs[k].textContent = pct(state[k]);
+      inputs[k].style.setProperty('--thumb', st.skin);
+    }
+    inputs.tyr.style.setProperty('--track', gradientFor(t => skinAt(t, state.mc1r, state.uv)));
+    inputs.mc1r.style.setProperty('--track', gradientFor(m => skinAt(state.tyr, m, state.uv)));
+    inputs.uv.style.setProperty('--track', gradientFor(u => skinAt(state.tyr, state.mc1r, u)));
+    $('ctl-summary').textContent = `TYR ${pct(state.tyr)} · MC1R ${pct(state.mc1r)} · UV ${pct(state.uv)}`;
+  }
+  function syncInputs() {
+    for (const k of ['tyr', 'mc1r', 'uv']) inputs[k].value = Math.round(state[k] * 100);
+  }
+
+  /* ---------- exemplos ---------- */
+  const PRESETS = [
+    { id: 'albino', label: 'Albinismo', tyr: 0, mc1r: 0.75, uv: 0 },
+    { id: 'ruivo', label: 'Ruivo (MC1R)', tyr: 0.40, mc1r: 0.12, uv: 0 },
+    { id: 'f2', label: 'Fototipo II', tyr: 0.15, mc1r: 0.80, uv: 0 },
+    { id: 'f4', label: 'Fototipo IV', tyr: 0.55, mc1r: 0.85, uv: 0 },
+    { id: 'f6', label: 'Fototipo VI', tyr: 0.95, mc1r: 0.95, uv: 0 },
+    { id: 'praia', label: 'Dia de praia', tyr: 0.30, mc1r: 0.85, uv: 0.90 }
+  ];
+  let tweenRaf = 0;
+  function buildPresets() {
+    const box = $('presets');
+    for (const p of PRESETS) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'preset';
+      b.id = 'preset-' + p.id;
+      b.setAttribute('aria-pressed', 'false');
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.background = skinAt(p.tyr, p.mc1r, p.uv);
+      const lab = document.createElement('span');
+      lab.textContent = p.label;
+      b.append(dot, lab);
+      b.addEventListener('click', () => goTo(p));
+      p.btn = b;
+      box.appendChild(b);
+    }
+  }
+  function updatePresets() {
+    for (const p of PRESETS) {
+      const on = Math.abs(p.tyr - state.tyr) < 0.006 && Math.abs(p.mc1r - state.mc1r) < 0.006 && Math.abs(p.uv - state.uv) < 0.006;
+      p.btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+  function goTo(p) {
+    cancelAnimationFrame(tweenRaf);
+    const from = { ...state }, to = { tyr: p.tyr, mc1r: p.mc1r, uv: p.uv };
+    if (reduceMotion) { Object.assign(state, to); syncInputs(); render(); return; }
+    const t0 = performance.now(), dur = 560;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      for (const key of ['tyr', 'mc1r', 'uv']) state[key] = from[key] + (to[key] - from[key]) * e;
+      if (k === 1) Object.assign(state, to);
+      syncInputs();
+      render();
+      if (k < 1) tweenRaf = requestAnimationFrame(step);
+    };
+    tweenRaf = requestAnimationFrame(step);
+  }
+
+  /* ---------- gráfico ---------- */
+  const CH = { hoverT: null };
+  function renderChart(st) {
+    const wrap = $('chart-wrap'), svg = $('chart');
+    const W = Math.max(260, Math.round(wrap.clientWidth));
+    const H = W < 480 ? 254 : 284;
+    const m = { t: 24, r: 10, b: 58, l: 44 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const N = 100, E = [], P = [];
+    for (let i = 0; i <= N; i++) { const p = pigments(i / N, state.mc1r, state.uv, SK_C0, SK_C1); E.push(p.E); P.push(p.P); }
+    const vmax = Math.max(E[N], ...P);
+    const yMax = vmax > 0.98 ? 2 : 1;
+    const X = t => m.l + t * pw, Y = v => m.t + ph - (v / yMax) * ph;
+    const stripY = m.t + ph + 8;
+    Object.assign(CH, { W, H, m, pw, ph, E, P, X, Y, yMax, stripY });
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    const f1 = v => v.toFixed(1);
+    let s = '<defs><linearGradient id="c-strip" gradientUnits="userSpaceOnUse" x1="' + X(0) + '" x2="' + X(1) + '" y1="0" y2="0">';
+    for (let i = 0; i <= 20; i++) s += `<stop offset="${i / 20}" stop-color="${skinAt(i / 20, state.mc1r, state.uv)}"/>`;
+    s += '</linearGradient></defs>';
+    const yt = yMax === 1 ? [0, 0.25, 0.5, 0.75, 1] : [0, 0.5, 1, 1.5, 2];
+    for (const v of yt) {
+      s += `<line class="${v === 0 ? 'c-axis' : 'c-grid'}" x1="${m.l}" x2="${m.l + pw}" y1="${f1(Y(v))}" y2="${f1(Y(v))}"/>`;
+      s += `<text class="c-tick" x="${m.l - 8}" y="${f1(Y(v))}" dy="0.35em" text-anchor="end">${fmtTick(v)}</text>`;
+    }
+    s += `<text class="c-title" x="0" y="10" dy="0.35em">Melanina (u.a.)</text>`;
+    const xt = pw < 230 ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1];
+    for (const t of xt) {
+      const anchor = t === 1 ? 'end' : 'middle';
+      const xx = t === 1 ? X(1) + 2 : X(t);
+      s += `<text class="c-tick" x="${f1(xx)}" y="${stripY + 30}" text-anchor="${anchor}">${pct(t)}</text>`;
+    }
+    s += `<text class="c-title" x="${f1(m.l + pw / 2)}" y="${H - 5}" text-anchor="middle">Atividade da tirosinase</text>`;
+    const lineD = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${f1(X(i / N))},${f1(Y(v))}`).join('');
+    const areaD = arr => lineD(arr) + `L${f1(X(1))},${f1(Y(0))}L${f1(X(0))},${f1(Y(0))}Z`;
+    s += `<path class="c-area eu" d="${areaD(E)}"/><path class="c-area ph" d="${areaD(P)}"/>`;
+    s += `<path class="c-line eu" d="${lineD(E)}"/><path class="c-line ph" d="${lineD(P)}"/>`;
+    s += `<rect x="${X(0)}" y="${stripY}" width="${pw}" height="12" rx="3" fill="url(#c-strip)"/>`;
+    s += `<rect class="c-strip-edge" x="${X(0) + 0.5}" y="${stripY + 0.5}" width="${pw - 1}" height="11" rx="3"/>`;
+    s += `<text class="c-tick" x="${m.l - 8}" y="${stripY + 6}" dy="0.35em" text-anchor="end">Pele</text>`;
+    // rótulos diretos no fim das linhas
+    const yE = Y(E[N]), yP = Y(P[N]);
+    const eUp = yE <= yP;
+    let yHi = (eUp ? yE : yP) - 9, yLo = (eUp ? yP : yE) + 16;
+    if (yLo > m.t + ph - 4) {
+      yLo = (eUp ? yP : yE) - 9;
+      if (yHi > yLo - 15) yHi = yLo - 15;
+    }
+    yHi = Math.max(m.t + 6, yHi);
+    const lx = X(1) - 4;
+    s += `<text class="c-lab" x="${f1(lx)}" y="${f1(eUp ? yHi : yLo)}" text-anchor="end">Eumelanina</text>`;
+    s += `<text class="c-lab" x="${f1(lx)}" y="${f1(eUp ? yLo : yHi)}" text-anchor="end">Feomelanina</text>`;
+    // valor atual
+    const xn = X(state.tyr);
+    s += `<line class="c-now" x1="${f1(xn)}" x2="${f1(xn)}" y1="${m.t}" y2="${stripY + 12}"/>`;
+    s += `<rect class="c-strip-mark" x="${f1(xn - 2)}" y="${stripY - 3}" width="4" height="18" rx="2"/>`;
+    s += `<circle class="c-dot ph" cx="${f1(xn)}" cy="${f1(Y(st.P))}" r="4.5"/>`;
+    s += `<circle class="c-dot eu" cx="${f1(xn)}" cy="${f1(Y(st.E))}" r="4.5"/>`;
+    s += `<g id="c-hover" style="display:none"><line class="c-cross" id="c-cross" y1="${m.t}" y2="${stripY + 12}"/>` +
+         `<circle class="c-dot ph" id="c-hp" r="4"/><circle class="c-dot eu" id="c-he" r="4"/></g>`;
+    svg.innerHTML = s;
+    $('lg-strip').style.setProperty('--strip-preview', gradientFor(t => skinAt(t, state.mc1r, state.uv)));
+    $('chart-sub').textContent = `Com o MC1R em ${pct(state.mc1r)} e o sol em ${pct(state.uv)}. Toque ou arraste no gráfico para escolher a tirosinase.`;
+    if (CH.hoverT !== null) showHover(CH.hoverT);
+  }
+  function showHover(t) {
+    CH.hoverT = t;
+    const g = $('c-hover');
+    if (!g) return;
+    const i = Math.round(t * 100), tt = i / 100;
+    const x = CH.X(tt);
+    g.style.display = '';
+    const cross = $('c-cross');
+    cross.setAttribute('x1', x); cross.setAttribute('x2', x);
+    $('c-he').setAttribute('cx', x); $('c-he').setAttribute('cy', CH.Y(CH.E[i]));
+    $('c-hp').setAttribute('cx', x); $('c-hp').setAttribute('cy', CH.Y(CH.P[i]));
+    const tip = $('tip');
+    tip.textContent = '';
+    const title = document.createElement('div');
+    title.className = 'tip-title';
+    title.textContent = `Tirosinase ${pct(tt)}`;
+    tip.appendChild(title);
+    const row = (keyClass, keyStyle, val, label) => {
+      const r = document.createElement('div');
+      r.className = 'tip-row';
+      const k = document.createElement('span');
+      k.className = keyClass;
+      if (keyStyle) k.style.background = keyStyle;
+      const b = document.createElement('b');
+      b.textContent = val;
+      r.append(k, b, document.createTextNode(label));
+      tip.appendChild(r);
+    };
+    row('tip-key eu', null, fmt2.format(CH.E[i]), 'eumelanina');
+    row('tip-key ph', null, fmt2.format(CH.P[i]), 'feomelanina');
+    const hex = skinAt(tt, state.mc1r, state.uv);
+    row('tip-sw', hex, hex, 'pele');
+    tip.hidden = false;
+    const tw = tip.offsetWidth;
+    let left = x + 14;
+    if (left + tw > CH.W - 2) left = x - tw - 14;
+    tip.style.left = Math.max(0, left) + 'px';
+    tip.style.top = (CH.m.t + 2) + 'px';
+  }
+  function hideHover() {
+    CH.hoverT = null;
+    const g = $('c-hover');
+    if (g) g.style.display = 'none';
+    $('tip').hidden = true;
+  }
+  function tFromEvent(e) {
+    const r = $('chart').getBoundingClientRect();
+    return clamp01((e.clientX - r.left - CH.m.l) / CH.pw);
+  }
+  function setTyr(t) {
+    cancelAnimationFrame(tweenRaf);
+    state.tyr = Math.round(t * 100) / 100;
+    syncInputs();
+    render();
+  }
+  function bindChart() {
+    const wrap = $('chart-wrap');
+    let drag = null;
+    wrap.addEventListener('pointerdown', e => {
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, type: e.pointerType, scrub: e.pointerType === 'mouse' };
+      if (drag.scrub) { wrap.setPointerCapture(e.pointerId); setTyr(tFromEvent(e)); }
+      showHover(tFromEvent(e));
+    });
+    wrap.addEventListener('pointermove', e => {
+      const t = tFromEvent(e);
+      if (drag && drag.id === e.pointerId) {
+        if (!drag.scrub && Math.abs(e.clientX - drag.x) > 6 && Math.abs(e.clientX - drag.x) > Math.abs(e.clientY - drag.y)) {
+          drag.scrub = true;
+          try { wrap.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        if (drag.scrub) setTyr(t);
+      }
+      showHover(t);
+    });
+    const end = e => {
+      if (drag && drag.id === e.pointerId) {
+        if (!drag.scrub && e.type === 'pointerup') setTyr(tFromEvent(e));
+        drag = null;
+      }
+      if (e.pointerType !== 'mouse') hideHover();
+    };
+    wrap.addEventListener('pointerup', end);
+    wrap.addEventListener('pointercancel', e => { drag = null; hideHover(); });
+    wrap.addEventListener('pointerleave', e => { if (!drag && e.pointerType === 'mouse') hideHover(); });
+    wrap.addEventListener('focus', () => showHover(state.tyr));
+    wrap.addEventListener('blur', hideHover);
+    wrap.addEventListener('keydown', e => {
+      const step = e.shiftKey ? 0.1 : 0.01;
+      let t = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') t = state.tyr + step;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') t = state.tyr - step;
+      else if (e.key === 'Home') t = 0;
+      else if (e.key === 'End') t = 1;
+      if (t === null) return;
+      e.preventDefault();
+      setTyr(clamp01(t));
+      showHover(state.tyr);
+    });
+  }
+
+  /* ---------- tabela ---------- */
+  function updateTable() {
+    const body = $('table-body');
+    if (!body.children.length) {
+      for (let i = 0; i <= 10; i++) {
+        const tr = document.createElement('tr');
+        for (let c = 0; c < 4; c++) tr.appendChild(document.createElement('td'));
+        body.appendChild(tr);
+      }
+    }
+    const nowRow = Math.round(state.tyr * 10);
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10, p = pigments(t, state.mc1r, state.uv, SK_C0, SK_C1), hex = skinAt(t, state.mc1r, state.uv);
+      const tds = body.children[i].children;
+      body.children[i].classList.toggle('is-now', i === nowRow);
+      tds[0].textContent = pct(t);
+      tds[1].textContent = fmt2.format(p.E);
+      tds[2].textContent = fmt2.format(p.P);
+      tds[3].textContent = '';
+      const cc = document.createElement('span');
+      cc.className = 'cc';
+      const sw = document.createElement('span');
+      sw.className = 'tip-sw';
+      sw.style.background = hex;
+      cc.append(sw, document.createTextNode(hex));
+      tds[3].appendChild(cc);
+    }
+  }
+
+  /* ---------- via ---------- */
+  function setMeter(id, v, text) {
+    $('m-' + id).style.setProperty('--v', clamp01(v).toFixed(4));
+    $('v-' + id).textContent = text;
+  }
+  function updatePath(st) {
+    setMeter('msh', st.msh, pct(st.msh));
+    setMeter('sig', st.S, pct(st.S));
+    setMeter('dq', st.D / 1.7, fmt2.format(st.D));
+    setMeter('ph', st.P / 1.7, fmt2.format(st.P));
+    setMeter('eu', st.E / 1.7, fmt2.format(st.E));
+    $('r-sw').style.background = st.skin;
+    $('r-hex').textContent = st.skin;
+  }
+
+  /* ---------- doca no celular ---------- */
+  function bindDock() {
+    const ctl = $('controls'), btn = $('dock-toggle');
+    btn.addEventListener('click', () => {
+      const collapsed = ctl.dataset.collapsed === 'true';
+      ctl.dataset.collapsed = collapsed ? 'false' : 'true';
+      btn.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+      btn.textContent = collapsed ? 'Ocultar' : 'Mostrar';
+      measureDock();
+    });
+    const mq = window.matchMedia('(max-width: 859.98px)');
+    function measureDock() {
+      document.documentElement.style.setProperty('--dock-h', mq.matches ? ctl.offsetHeight + 'px' : '0px');
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(measureDock).observe(ctl);
+    mq.addEventListener ? mq.addEventListener('change', measureDock) : mq.addListener(measureDock);
+    measureDock();
+  }
+
+  /* ---------- ciclo ---------- */
+  let lastW = 0;
+  function render() {
+    const st = compute(state.tyr, state.mc1r, state.uv);
+    updateControls(st);
+    updateSpecimen(st);
+    updateReadouts(st);
+    updateStatus(st);
+    updatePresets();
+    renderChart(st);
+    updateTable();
+    updatePath(st);
+  }
+  let rafPending = false;
+  function schedule() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => { rafPending = false; render(); });
+  }
+
+  function start(data) {
+    for (const k of ['tyr', 'mc1r', 'uv']) {
+      if (data && typeof data[k] === 'number' && isFinite(data[k])) state[k] = clamp01(data[k]);
+    }
+    buildSpecimen();
+    buildPresets();
+    syncInputs();
+    for (const k of ['tyr', 'mc1r', 'uv']) {
+      inputs[k].addEventListener('input', () => {
+        cancelAnimationFrame(tweenRaf);
+        state[k] = inputs[k].value / 100;
+        schedule();
+      });
+    }
+    bindChart();
+    bindDock();
+    render();
+    const wrap = $('chart-wrap');
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => {
+        const w = Math.round(wrap.clientWidth);
+        if (w !== lastW) { lastW = w; schedule(); }
+      }).observe(wrap);
+    } else {
+      window.addEventListener('resize', schedule);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  }
+
+  if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') {
+    window.claude.hot.snapshot(() => ({ tyr: state.tyr, mc1r: state.mc1r, uv: state.uv }));
+  }
+  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+</body></html>
